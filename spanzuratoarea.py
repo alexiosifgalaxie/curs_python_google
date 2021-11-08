@@ -42,4 +42,3 @@ while count_nr <= word_length:
         elif count_nr > word_length:
             print(f"Ai pierdut! Cuvantul era {word}")
         list_already_checked.append(user_letter)
-#codul lu mentora
