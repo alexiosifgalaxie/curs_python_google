@@ -14,12 +14,13 @@ Asa arata tabla:
 """)
 
 lista_casute = ["-", "-", "-", "-", "-", "-", "-", "-", "-"]
-prioritate0=["5"]
-prioritate1 =["1","3","7","9"]
-prioritate2 =["2","4","6","8"]
+prioritate0 = ["5"]
+prioritate1 = ["1", "3", "7", "9"]
+prioritate2 = ["2", "4", "6", "8"]
 while prioritate0 or prioritate1 or prioritate2:
     casuta_selectata = input("Alege casuta: \n\n")
-    while casuta_selectata not in prioritate0 and casuta_selectata not in prioritate1 and casuta_selectata not in prioritate2:
+    while casuta_selectata not in prioritate0 and casuta_selectata not in prioritate1\
+            and casuta_selectata not in prioritate2:
         print("Introdu o casuta valida\n\n")
         for i in range(0, 9, 3):
             print(f"{lista_casute[i]}|{lista_casute[i + 1]}|{lista_casute[i + 2]}")
@@ -48,13 +49,13 @@ while prioritate0 or prioritate1 or prioritate2:
     print("\nacum alege calculatorul:\n")
     if prioritate0:
         while prioritate0:
-            lista_casute[4]="0"
+            lista_casute[4] = "0"
             prioritate0.remove("5")
             break
     elif prioritate1:
         while prioritate1:
-            casuta_selectata=random.choice(prioritate1)
-            lista_casute[int(casuta_selectata)-1]="0"
+            casuta_selectata = random.choice(prioritate1)
+            lista_casute[int(casuta_selectata)-1] = "0"
             prioritate1.remove(casuta_selectata)
             break
     elif prioritate2:
