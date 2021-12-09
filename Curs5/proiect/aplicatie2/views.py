@@ -1,14 +1,20 @@
+import random
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import HttpResponseRedirect
+from django.contrib.auth.models import User
+from django.core.mail import EmailMultiAlternatives
+from django.http import HttpResponseRedirect
 
-# Create your views here.
+  # Create your views here.
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, UpdateView
 
 from aplicatie2.forms import CompaniesForm, NewAccountForm
 from aplicatie2.models import Pontaj, Companies, UserExtend
 import datetime
+import string
 
 
 @login_required
@@ -42,7 +48,7 @@ class CreateCompaniesView(LoginRequiredMixin, CreateView):
 
 class UpdateCompaniesView(LoginRequiredMixin, UpdateView):
     model = Companies
-    fields = '__all__'
+    form_class = CompaniesForm
     template_name = 'aplicatie2/companies_form.html'
 
     def get_form_kwargs(self):
@@ -55,14 +61,21 @@ class UpdateCompaniesView(LoginRequiredMixin, UpdateView):
 
 class UpdateProfile(LoginRequiredMixin, UpdateView):
         model = UserExtend
-        fields = '__all__'
-        template_name = 'aplicatie/companies_form.html'
+        form_class = NewAccountForm
+        template_name = 'aplicatie2/companies_form.html'
 
         def get_queryset(self):
                 return self.model.objects.all()
 
+        def get_form_kwargs(self):
+            kwargs = super(UpdateProfile, self).get_form_kwargs()
+            kwargs.update({'current_user': self.request.user.id, 'action': 'update', 'pk': self.kwargs['pk']})
+            return kwargs
+
         def get_success_url(self):
            return reverse('aplicatie2:lista')
+
+punctuation = '!$%?#@'
 
 class NewAccountView(LoginRequiredMixin, CreateView):
     model = UserExtend
@@ -71,7 +84,7 @@ class NewAccountView(LoginRequiredMixin, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super(NewAccountView, self).get_form_kwargs()
-        kwargs.update({'curent user': self.request.user.id})
+        kwargs.update({'current_user': self.request.user.id, 'action': 'create', 'pk': None})
         return kwargs
 
     def form_valid(self, form):
@@ -80,5 +93,15 @@ class NewAccountView(LoginRequiredMixin, CreateView):
         return(NewAccountView, self).form_valid(form)
 
     def get_success_url(self):
-        psw = ''.join(random)
+        psw = ''.join(random.SystemRandom().choice(string.ascii_uppercase + string.ascii_lowercase + string.digits + string.digits+ punctuation) for _ in range(8))
+        if User.objects.filter(id=self.objects.id).exists():
+            user_instance = User.objects.get(id=self.object.id)
+            user_instance.set_password(psw)
+            user_instance.username = f"{'.'.join(str(user_instance.first_name).split(' '))}.{'.'.join(str(user_instance.last_name).split(' '))}"
+            user_instance.save()
+            content_email = f"Username si parola: {user_instance.username} {psw}"
+            msg_html = render_to_string('emails/invite_user.html', {'content_email': content_email})
+            msg = EmailMultiAlternatives(subject='New account', body=content_email, from_email='contact@test.ro', to=[user_instance.email])
+            msg.attach_alternative(msg_html, 'text/html')
+            msg.send()
         return reverse('aplicatie2:lista')

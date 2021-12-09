@@ -2,8 +2,8 @@
 {% block content %}
     <form method="POST">
         {% csrf_token %}
-        {% for field in form %}
-            {{ field.label }} {{ item }}<br>
+        {% for item in form %}
+            {{ item.label }} {{ item }}<br>
             {{ item.errors }}
         {% endfor %}
         <button type="submit">Save</button>

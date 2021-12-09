@@ -13,14 +13,14 @@ class Logs(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True, blank=True)
     updated_at = models.DateTimeField(auto_now=True, blank=True)
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
     action = models.CharField('Action', max_length=10, choices=action_choices)
     url = models.CharField('URL', max_length=100)
 
 
 class Pontaj(models.Model):
 
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True )
     start_date = models.DateTimeField()
     end_date = models.DateTimeField(null=True)
 
@@ -38,6 +38,6 @@ class Companies(models.Model):
 class UserExtend(User):
     customer = models.ForeignKey(Companies, on_delete=models.CASCADE)
 
-    def __str(self):
+    def __str__(self):
         return f"{self.first_name} {self.last_name} {self.customer.name}"
 
