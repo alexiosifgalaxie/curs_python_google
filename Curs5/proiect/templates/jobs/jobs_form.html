@@ -1,13 +1,14 @@
 {% extends 'base.html' %}
 {% block content %}
     <style>
-            ErrorList:
-                color: redl
+        .errorlist {
+            color: red
+        }
     </style>
     <form method="POST">
         {% csrf_token %}
-        {% for field in form %}
-            {{ field.label }} {{ field }}<br>
+        {% for item in form %}
+            {{ item.label }} {{ item }}<br>
             {{ item.errors }}
         {% endfor %}
         <button type="submit">Save</button>
